@@ -1,0 +1,5 @@
+pygame
+numpy
+pylint
+tensorflow
+opencv-python
