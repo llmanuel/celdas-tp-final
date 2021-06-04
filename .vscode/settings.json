@@ -1,0 +1,242 @@
+{
+  "launch": {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "python",
+        "request": "launch",
+        "name": "Python: current file",
+        "program": "${file}",
+        "console": "integratedTerminal"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Activate restaurants",
+        "program": "${workspaceFolder}/bin/activate-restaurants.js",
+        "env": {
+          "NODE_ENV": "development"
+        },
+        "args": [
+          "--plan",
+          "PLUS",
+          "--restaurant-uuids",
+          "c6901bdc-bbc3-40e8-a1f0-d6001e3250f1,fd58bd29-fd9f-431b-be8d-66ae5f796fe5",
+        ],
+        "cwd": "${workspaceRoot}"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Launch Project",
+        "program": "${workspaceFolder}/index.js",
+        "env": {
+          "NODE_ENV": "development"
+        },
+        "cwd": "${workspaceRoot}",
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Launch Project Ts",
+        "program": "${workspaceFolder}/dist/src/index.js",
+        "env": {
+          "NODE_ENV": "development"
+        },
+        "cwd": "${workspaceRoot}",
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Create database",
+        "program": "${workspaceFolder}/database-create.js",
+        "env": {
+          "NODE_ENV": "development"
+        },
+        "cwd": "${workspaceRoot}"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Jest All",
+        "program": "${workspaceFolder}/node_modules/.bin/jest",
+        "args": [
+          "--runInBand",
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "disableOptimisticBPs": true,
+        "windows": {
+          "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+        },
+        "env": {
+          "NODE_ENV": "test"
+          // ,"DEBUG": "nock.*"
+        },
+        "cwd": "${workspaceRoot}"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Jest Current File",
+        "program": "${workspaceFolder}/node_modules/.bin/jest",
+        "args": [
+          // "--config",
+          // "jest.config.js",
+          "${fileDirname}/${fileBasenameNoExtension}"
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "disableOptimisticBPs": true,
+        "windows": {
+          "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+        },
+        "env": {
+          "NODE_ENV": "test"
+          // ,"DEBUG": "nock.*"
+        },
+        "cwd": "${workspaceRoot}"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Jest Current Test",
+        "program": "${workspaceFolder}/node_modules/.bin/jest",
+        "args": [
+          "--config",
+          "jest.config.js",
+          "${fileDirname}/${fileBasenameNoExtension}:${lineNumber}"
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "disableOptimisticBPs": true,
+        "windows": {
+          "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+        },
+        "env": {
+          "NODE_ENV": "test"
+          // ,"DEBUG": "nock.*"
+        },
+        "cwd": "${workspaceRoot}"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Cucumber all",
+        "program": "${workspaceFolder}/node_modules/.bin/cucumber-js",
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "windows": {
+          "program": "${workspaceFolder}/node_modules/cucumber/bin/cucumber"
+        },
+        "args": [
+          // "--fail-fast",
+          // "--exit"
+        ],
+        "env": {
+          "NODE_ENV": "test"
+          // ,"DEBUG": "nock.*"
+        },
+        "cwd": "${workspaceRoot}"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Cucumber current file",
+        "program": "${workspaceFolder}/node_modules/.bin/cucumber-js",
+        "args": [
+          "${file}",
+          "--exit"
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "windows": {
+          "program": "${workspaceFolder}/node_modules/cucumber/bin/cucumber"
+        },
+        "env": {
+          "NODE_ENV": "test"
+          // ,"DEBUG": "nock.*"
+        },
+        "cwd": "${workspaceRoot}"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Cucumber current file Ts",
+        "program": "${workspaceFolder}/cucumber-runner",
+        "args": [
+          "${file}",
+          "--exit"
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "windows": {
+          "program": "${workspaceFolder}/node_modules/cucumber/bin/cucumber"
+        },
+        "env": {
+          "NODE_ENV": "test"
+          // ,"DEBUG": "nock.*"
+        },
+        "cwd": "${workspaceRoot}"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Cucumber current scenario",
+        "program": "${workspaceFolder}/node_modules/.bin/cucumber-js",
+        "args": [
+          // "--format",
+          // "event-protocol",
+          "${file}:${lineNumber}",
+          "--exit"
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "windows": {
+          "program": "${workspaceFolder}/node_modules/cucumber/bin/cucumber"
+        },
+        "env": {
+          "NODE_ENV": "test"
+          // ,"DEBUG": "nock.*"
+        },
+        "cwd": "${workspaceRoot}"
+      }
+    ]
+  },
+  "remote.SSH.configFile": "/Users/mllauro/theFork/vagrant-ssh",
+  "window.zoomLevel": 1,
+  "editor.tabSize": 2,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "remote.SSH.showLoginTerminal": true,
+  "workbench.startupEditor": "newUntitledFile",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "tslint.configFile": "tslint.json",
+  "tslint.packageManager": "yarn",
+  "workbench.iconTheme": "material-icon-theme",
+  "[json]": {
+    "editor.defaultFormatter": "HookyQR.beautify"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "python.pythonPath": "/Users/mllauro/Facultad/Celdas/Tp-1/flappyBirdAutonomous/env/bin/python",
+  "workbench.editorAssociations": [
+    {
+      "viewType": "jupyter.notebook.ipynb",
+      "filenamePattern": "*.ipynb"
+    }
+  ],
+  "workbench.sideBar.location": "right"
+}
