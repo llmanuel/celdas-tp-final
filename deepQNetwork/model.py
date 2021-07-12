@@ -35,7 +35,7 @@ class DQNetwork:
       self.conv1_batchnorm = tf.layers.batch_normalization(self.conv1,
                                               training = True,
                                               epsilon = 1e-5,
-                                                name = 'batch_norm1')
+                                              name = 'batch_norm1')
       
       self.conv1_out = tf.nn.elu(self.conv1_batchnorm, name="conv1_out")
       ## --> [20, 20, 32]
@@ -52,13 +52,13 @@ class DQNetwork:
                             kernel_size = [4,4],
                             strides = [2,2],
                             padding = "VALID",
-                          kernel_initializer=tf.contrib.layers.xavier_initializer_conv2d(),
+                            kernel_initializer=tf.contrib.layers.xavier_initializer_conv2d(),
                             name = "conv2")
   
       self.conv2_batchnorm = tf.layers.batch_normalization(self.conv2,
                                               training = True,
                                               epsilon = 1e-5,
-                                                name = 'batch_norm2')
+                                              name = 'batch_norm2')
 
       self.conv2_out = tf.nn.elu(self.conv2_batchnorm, name="conv2_out")
       ## --> [9, 9, 64]
@@ -75,7 +75,7 @@ class DQNetwork:
                             kernel_size = [4,4],
                             strides = [2,2],
                             padding = "VALID",
-                          kernel_initializer=tf.contrib.layers.xavier_initializer_conv2d(),
+                            kernel_initializer=tf.contrib.layers.xavier_initializer_conv2d(),
                             name = "conv3")
   
       self.conv3_batchnorm = tf.layers.batch_normalization(self.conv3,
@@ -94,14 +94,14 @@ class DQNetwork:
       self.fc = tf.layers.dense(inputs = self.flatten,
                             units = 512,
                             activation = tf.nn.elu,
-                                  kernel_initializer=tf.contrib.layers.xavier_initializer(),
-                          name="fc1")
+                            kernel_initializer=tf.contrib.layers.xavier_initializer(),
+                            name="fc1")
       
       
       self.output = tf.layers.dense(inputs = self.fc, 
-                                      kernel_initializer=tf.contrib.layers.xavier_initializer(),
-                                    units = 3, 
-                                  activation=None)
+                                kernel_initializer=tf.contrib.layers.xavier_initializer(),
+                                units = 3, 
+                                activation=None)
 
 
       # Q is our predicted Q value.

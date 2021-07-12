@@ -231,12 +231,9 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "python.pythonPath": "/Users/mllauro/Facultad/Celdas/Tp-1/flappyBirdAutonomous/env/bin/python",
-  "workbench.editorAssociations": [
-    {
-      "viewType": "jupyter.notebook.ipynb",
-      "filenamePattern": "*.ipynb"
-    }
-  ],
+  "python.pythonPath": "deepQLearning/bin/python",
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter.notebook.ipynb"
+  },
   "workbench.sideBar.location": "right"
 }
