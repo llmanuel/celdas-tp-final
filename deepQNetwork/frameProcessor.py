@@ -20,7 +20,7 @@ class FrameProcessor:
     # print(a)
     return normalizedFrame
 
-  def stackFrames(self, currentFrame, justRevived):
+  def stackFrames(self, currentFrame, justRevived = False):
     preprocessedframe = self.preprocessFrame(currentFrame)
 
     if justRevived:
@@ -39,7 +39,7 @@ class FrameProcessor:
       stackedState = np.stack(self.stackedFrames, axis = 2)
     else:
       self.stackedFrames.append(preprocessedframe)
-      stackedState = np.stack(self.stackFrames, axis = 2)
+      stackedState = np.stack(self.stackedFrames, axis = 2)
 
     return stackedState
 

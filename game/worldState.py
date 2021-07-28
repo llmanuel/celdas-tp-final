@@ -5,7 +5,7 @@ CRITICAL_DISTANCE = 180
 DANGER_DISTANCE = 60
 
 class WorldState:
-    def __init__(self, velocity, currentPositions, isDead = None):
+    def __init__(self, currentPositions, velocity, isDead = None):
         self.farAwayFormWall = self.isFarAwayFormWall(currentPositions)
         self.distanceToGap = self.calculateDistanceToGap(currentPositions)
         self.zone = Zones().getZoneAccordingToWalls(currentPositions)

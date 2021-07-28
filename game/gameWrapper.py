@@ -7,9 +7,11 @@ class GameWrapper:
 
   def __init__(self):
     self.flappybird = FlappyBird()
+    self.rewardCounter = 0
 
   def initGame(self):
     self.flappybird.initGame()
+    self.flappybird.eachCycle()
 
   def getGameFrame(self):
     return self.flappybird.getGameImage()
@@ -21,6 +23,9 @@ class GameWrapper:
   def isBirdDead(self):
     return self.flappybird.isDead()
 
+  def getTotalReward(self):
+    return self.rewardCounter
+
   def makeAction(self, action):
     # a = input("now what")
     currentState = WorldState(self.flappybird.getWorldPositionObjects(), self.flappybird.getBirdVelocity(), self.flappybird.isDead())
@@ -30,10 +35,12 @@ class GameWrapper:
     else:
       self.flappybird.releaseKey()
       # print(f"{bcolors.WARNING}Action: Release key{bcolors.ENDC}")
-
+    self.flappybird.eachCycle()
     resultState = WorldState(self.flappybird.getWorldPositionObjects(), self.flappybird.getBirdVelocity(), self.flappybird.isDead())
 
     reward = UtilityCalculator(currentState, resultState, action).getUtility()
+
+    self.rewardCounter += reward
 
     return reward, self.flappybird.isDead()
   

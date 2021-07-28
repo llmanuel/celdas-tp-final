@@ -7,8 +7,10 @@ from src.theoryManager import TheoryManager
 from src.actions import Actions
 from deepQNetwork.frameProcessor import FrameProcessor
 from deepQNetwork.memory import Memory
+from deepQNetwork.model import DQNetwork
 from deepQNetwork.modelPretraining import ModelPretraining
 from deepQNetwork.modelTraining import ModelTraining
+from deepQNetwork.modelPlaying import ModelPlaying
 
 class bcolors:
     HEADER = '\033[95m'
@@ -22,66 +24,30 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 class Agent:
-  TRAIN = "Train"
-  RUN = "Run"
+  TRAIN = "t"
+  RUN = "p"
 
   def __init__(self):
       self.flappybird = FlappyBird()
       self.frameProcessor = FrameProcessor()
       self.memory = Memory()
+      self.dqNetwork = DQNetwork()
 
-  def observeworld(self):
-      # positions = self.flappybird.getWorldPositionObjects()
-      # gravity = self.flappybird.getGravity()
-      # jumpSpeed = self.flappybird.getJumpSpeed()
-      # birdVelocity = self.flappybird.getBirdVelocity()
-      frame = self.flappybird.getGameImage()
-      print(f"{bcolors.OKGREEN}Frame: {frame}{bcolors.ENDC}")
-      processedFrame = self.frameProcessor.preprocessFrame(frame)
-      print(f"{bcolors.OKBLUE}Processed Frame: {processedFrame}{bcolors.ENDC}")
-      # print("Bottom block: ", positions[0])
-      # print("Top block: ", positions[1])
-      # print(f"{bcolors.OKGREEN}Bird: {positions[2]}{bcolors.ENDC}")
-      # print(f"{bcolors.OKBLUE}Gravity: {gravity}{bcolors.ENDC}")
-      # print(f"{bcolors.OKBLUE}Jump Speed: {jumpSpeed}{bcolors.ENDC}")
-      # print(f"{bcolors.OKCYAN}Bird Velocity: {birdVelocity}{bcolors.ENDC}")
-      # print("Count: ",self.flappybird.counter)
-      # print("Dead: ", self.flappybird.dead)
+  # def observeworld(self):
+  #     frame = self.flappybird.getGameImage()
+  #     print(f"{bcolors.OKGREEN}Frame: {frame}{bcolors.ENDC}")
+  #     processedFrame = self.frameProcessor.preprocessFrame(frame)
+  #     print(f"{bcolors.OKBLUE}Processed Frame: {processedFrame}{bcolors.ENDC}")
 
   def run(self):  
-      option = input(f"Select between: {self.TRAIN} or {self.RUN}")
+      option = input(f"Select between: train {self.TRAIN} or play {self.RUN}")
 
       if option == self.TRAIN:
         # Pretrain model to avoid having an empty memory
         ModelPretraining(self.memory).start()
 
         # Agent train
-        ModelTraining(self.memory).start()
+        ModelTraining(self.memory, self.dqNetwork).start()
       else:
         # Agent ru
-        print("Agent play")
-
-
-      # while True:
-      #     self.flappybird.eachCycle()
-      #     if not starting and turnsDeadCounter == 0:
-      #         self.theoryManager.verifyTheory(lastTheory, self.flappybird.getWorldPositionObjects(), self.flappybird.getBirdVelocity(), self.flappybird.isDead(), turns)
-      #         if self.flappybird.isDead():
-      #             turnsDeadCounter = 1
-      #     else:
-      #         starting = False
-
-      #     if not self.flappybird.isDead():
-      #         theory = self.theoryManager.getTheory(self.flappybird.getWorldPositionObjects(), self.flappybird.getBirdVelocity(), turns)
-      #         # self.printTheory(theory)
-      #         self.setLastTheory(theory)
-      #         lastTheory = theory     
-      #         self.act(theory)
-      #         turnsDeadCounter = 0
-      #         turns += 1
-
-      #     # The next lines are for saving the Theories in theories.json
-      #     # if turns % 200 == 0:
-      #     #     print(f"{bcolors.OKBLUE}Saving theories{bcolors.ENDC}")
-          #     self.theoryManager.saveTheories()
-          
+        ModelPlaying(self.dqNetwork).start()

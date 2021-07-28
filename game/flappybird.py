@@ -30,6 +30,7 @@ class FlappyBird:
         self.isKeyDown = False
         self.birdVelocity = None
         self.clockDisplay = None
+        self.collided = False
         
 
     def updateWalls(self):
@@ -92,18 +93,21 @@ class FlappyBird:
         positions = self.calculateWorldPositionObjects()
         upRect = pygame.Rect(positions[0][0],positions[0][1],positions[0][2],positions[0][3])
         downRect = pygame.Rect(positions[1][0],positions[1][1],positions[1][2],positions[1][3])
-        if upRect.colliderect(self.bird):
+        if upRect.colliderect(self.bird) or downRect.colliderect(self.bird):
             self.dead = True
-        if downRect.colliderect(self.bird):
-            self.dead = True
-        if not 0 < self.bird[1] < 720:
+            self.collided = True
+        elif not 0 < self.bird[1] < 720:
             self.bird[1] = 50
             self.birdY = 50
-            self.dead = False
+            self.dead = True
+            self.collided = False
             self.counter = 0
             self.wallx = 400
             self.offset = random.randint(-110, 110)
             self.gravity = 5
+        else:
+            if not self.collided:
+                self.dead = False
 
     def holdKeyDown(self):
         self.isKeyDown = True

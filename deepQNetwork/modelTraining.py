@@ -1,29 +1,30 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import numpy as np
 import random
 from deepQNetwork.frameProcessor import FrameProcessor
-from deepQNetwork.model import DQNetwork
 from game.actions import Actions
 from game.gameWrapper import GameWrapper
 
 class ModelTraining:
-  TOTAL_EPISODES = 500
+  TOTAL_EPISODES = 5000
   EXPLORE_START = 1.0
   EXPLORE_STOP = 0.01
-  DECAY_RATE = 0.0001 
+  DECAY_RATE = 0.001 
   BATCH_SIZE = 64
   GAMMA = 0.95
 
-  def __init__(self, memory):
+  def __init__(self, memory, dqNetwork):
     self.memory = memory
     self.frameProcessor = FrameProcessor()
     self.game = GameWrapper()
+    self.dqNetwork = dqNetwork
 
   def start(self):
+    tf.disable_v2_behavior()
     # Setup TensorBoard Writer
-    writer = tf.summary.FileWriter("/tensorboard/dqn/1")
+    writer = tf.summary.FileWriter("/home/manuel/Facultad/celdas-tp-final/tensorboard/dqn/1")
     ## Losses
-    tf.summary.scalar("Loss", DQNetwork.loss)
+    tf.summary.scalar("Loss", self.dqNetwork.loss)
     writeOp = tf.summary.merge_all()
 
     saver = tf.train.Saver()
@@ -57,7 +58,7 @@ class ModelTraining:
 
           if isDead:
             nextState = np.zeros(state.shape)
-            self.memory.add((state, action, reward, nextState))
+            self.memory.add((state, action, reward, nextState, isDead))
 
             self.game.forwardTillRevive()
             frame = self.game.getGameFrame()
@@ -74,7 +75,7 @@ class ModelTraining:
           else:
             nextFrame = self.game.getGameFrame()
             nextState = self.frameProcessor.stackFrames(nextFrame)
-            self.memory.add((state, action, reward, nextState))
+            self.memory.add((state, action, reward, nextState, isDead))
             state = nextState
 
           ### LEARNING PART            
@@ -89,7 +90,7 @@ class ModelTraining:
           targetQsBatch = []
 
           # Get Q values for next_state 
-          QsNextState = sess.run(DQNetwork.output, feed_dict = {DQNetwork.inputs_: nextStatesMiniBatch})
+          QsNextState = sess.run(self.dqNetwork.output, feed_dict = {self.dqNetwork.inputs_: nextStatesMiniBatch})
           
           # Set Q_target = r if the episode ends at s+1, otherwise set Q_target = r + gamma*maxQ(s', a')
           for i in range(0, len(batch)):
@@ -106,25 +107,26 @@ class ModelTraining:
 
           targetsMiniBatch = np.array([each for each in targetQsBatch])
 
-          loss, _ = sess.run([DQNetwork.loss, DQNetwork.optimizer],
-                              feed_dict={DQNetwork.inputs_: statesMiniBatch,
-                                          DQNetwork.target_Q: targetsMiniBatch,
-                                          DQNetwork.actions_: actionsMiniBatch})
+          loss, _ = sess.run([self.dqNetwork.loss, self.dqNetwork.optimizer],
+                              feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
+                                          self.dqNetwork.target_Q: targetsMiniBatch,
+                                          self.dqNetwork.actions_: actionsMiniBatch})
 
           # Write TF Summaries
-          summary = sess.run(writeOp, feed_dict={DQNetwork.inputs_: statesMiniBatch,
-                                              DQNetwork.target_Q: targetsMiniBatch,
-                                              DQNetwork.actions_: actionsMiniBatch})
+          summary = sess.run(writeOp, feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
+                                              self.dqNetwork.target_Q: targetsMiniBatch,
+                                              self.dqNetwork.actions_: actionsMiniBatch})
           writer.add_summary(summary, episode)
           writer.flush()
 
         # Reset while
         justRevived = True
 
-      # Save model every 5 episodes
-      if episode % 5 == 0:
-          save_path = saver.save(sess, "./models/model.ckpt")
+        # Save model every 5 episodes
+        if episode % 5 == 0:
           print("Model Saved")
+          saver.save(sess, "/home/manuel/Facultad/celdas-tp-final/tensorboard/dqn/1/models/model.ckpt")
+
 
   def predictAction(self, exploreStart, exploreStop, decayRate, decayStep, state, sess):
     ## EPSILON GREEDY STRATEGY
@@ -141,7 +143,7 @@ class ModelTraining:
     else:
         # Get action from Q-network (exploitation)
         # Estimate the Qs values state
-        Qs = sess.run(DQNetwork.output, feed_dict = {DQNetwork.inputs_: state.reshape((1, *state.shape))})
+        Qs = sess.run(self.dqNetwork.output, feed_dict = {self.dqNetwork.inputs_: state.reshape((1, *state.shape))})
         
         # Take the biggest Q value (= the best action)
         choice = np.argmax(Qs)

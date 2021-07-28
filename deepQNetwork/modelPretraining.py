@@ -29,7 +29,7 @@ class ModelPretraining:
 
       if isDead:
         nextState = np.zeros(state.shape)
-        self.memory.add((state, action, reward, nextState))
+        self.memory.add((state, action, reward, nextState, isDead))
 
         self.game.forwardTillRevive()
         frame = self.game.getGameFrame()
@@ -37,5 +37,5 @@ class ModelPretraining:
       else:
         nextFrame = self.game.getGameFrame()
         nextState = self.frameProcessor.stackFrames(nextFrame)
-        self.memory.add((state, action, reward, nextState))
+        self.memory.add((state, action, reward, nextState, isDead))
         state = nextState
