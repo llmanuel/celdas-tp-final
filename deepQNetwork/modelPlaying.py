@@ -15,7 +15,7 @@ class ModelPlaying:
       saver = tf.train.Saver()
       
       # Load the model
-      saver.restore(sess, "/home/manuel/Facultad/celdas-tp-final/tensorboard/dqn/1/models/model.ckpt")
+      saver.restore(sess, "/home/manuel/Facultad/celdas-tp-final/models/2/model.ckpt")
       self.game.initGame()
 
       for i in range(100):

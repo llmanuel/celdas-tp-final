@@ -43,7 +43,7 @@ class FlappyBird:
     def calculateWorldPositionObjects(self):
         self.worldPositions =  np.array([
                             [self.wallx,
-                             360 + self.gap - self.offset,
+                             360 + self.gap - self.offset + 10,
                              self.wallUp.get_width() - 10,
                              self.wallUp.get_height()
                              ],
@@ -79,6 +79,9 @@ class FlappyBird:
     def getGameImage(self):
         image_data = pygame.surfarray.array3d(pygame.display.get_surface())
         return image_data
+
+    def getScore(self):
+        return self.counter
 
     def birdUpdate(self):
         if self.jump:

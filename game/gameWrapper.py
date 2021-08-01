@@ -18,6 +18,7 @@ class GameWrapper:
 
   def forwardTillRevive(self):
     while self.flappybird.isDead():
+      self.rewardCounter = 0
       self.flappybird.eachCycle()
 
   def isBirdDead(self):
@@ -25,6 +26,9 @@ class GameWrapper:
 
   def getTotalReward(self):
     return self.rewardCounter
+
+  def getScore(self):
+    return self.flappybird.getScore()
 
   def makeAction(self, action):
     # a = input("now what")

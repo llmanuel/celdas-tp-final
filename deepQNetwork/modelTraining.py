@@ -9,7 +9,7 @@ class ModelTraining:
   TOTAL_EPISODES = 5000
   EXPLORE_START = 1.0
   EXPLORE_STOP = 0.01
-  DECAY_RATE = 0.001 
+  DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
   GAMMA = 0.95
 
@@ -18,26 +18,27 @@ class ModelTraining:
     self.frameProcessor = FrameProcessor()
     self.game = GameWrapper()
     self.dqNetwork = dqNetwork
+    self.decayStep = 0
 
   def start(self):
     tf.disable_v2_behavior()
     # Setup TensorBoard Writer
-    writer = tf.summary.FileWriter("/home/manuel/Facultad/celdas-tp-final/tensorboard/dqn/1")
-    ## Losses
-    tf.summary.scalar("Loss", self.dqNetwork.loss)
-    writeOp = tf.summary.merge_all()
+    # writer = tf.summary.FileWriter("/home/manuel/Facultad/celdas-tp-final/tensorboard/dqn/1")
+    # ## Losses
+    # tf.summary.scalar("Loss", self.dqNetwork.loss)
+    # writeOp = tf.summary.merge_all()
 
     saver = tf.train.Saver()
 
     with tf.Session() as sess:
       sess.run(tf.global_variables_initializer())
-
-      decayStep = 0
+      saver.restore(sess, "/home/manuel/Facultad/celdas-tp-final/models/2/model.ckpt")
 
       self.game.initGame()
 
+      bestScore = 0
+
       for episode in range(self.TOTAL_EPISODES):
-        step = 0
         episodeRewards = []
 
         self.game.forwardTillRevive()
@@ -47,14 +48,17 @@ class ModelTraining:
 
         justRevived = False
 
-        while not justRevived:
-          decayStep += 1
+        exploringOfEpisode = []
 
-          action, exploreProbability = self.predictAction(self.EXPLORE_START, self.EXPLORE_STOP, self.DECAY_RATE, decayStep, state, sess)
+        while not justRevived:
+          self.decayStep += 1
+
+          action, exploreProbability = self.predictAction(self.EXPLORE_START, self.EXPLORE_STOP, self.DECAY_RATE, state, sess)
 
           reward, isDead = self.game.makeAction(action)
 
           episodeRewards.append(reward)
+          exploringOfEpisode.append(exploreProbability)
 
           if isDead:
             nextState = np.zeros(state.shape)
@@ -66,12 +70,19 @@ class ModelTraining:
 
             justRevived = True
 
-            totalReward = np.sum(episodeRewards)
+            newScore = self.game.getScore()
+
+            if newScore > bestScore:
+              bestScore =  newScore
+
+            # totalReward = np.sum(episodeRewards)
 
             print('Episode: {}'.format(episode),
-                      'Total reward: {}'.format(totalReward),
-                      'Training loss: {:.4f}'.format(loss),
-                      'Explore Probability: {:.4f}'.format(exploreProbability))
+                      # 'Total reward: {}'.format(totalReward),
+                      # 'Training loss: {:.4f}'.format(loss),
+                      'Best Score: {:.4f}'.format(bestScore),
+                      'Max explore Probability: {:.4f}'.format(max(exploringOfEpisode)),
+                      'Min explore Probability: {:.4f}'.format(min(exploringOfEpisode)))
           else:
             nextFrame = self.game.getGameFrame()
             nextState = self.frameProcessor.stackFrames(nextFrame)
@@ -112,12 +123,12 @@ class ModelTraining:
                                           self.dqNetwork.target_Q: targetsMiniBatch,
                                           self.dqNetwork.actions_: actionsMiniBatch})
 
-          # Write TF Summaries
-          summary = sess.run(writeOp, feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
-                                              self.dqNetwork.target_Q: targetsMiniBatch,
-                                              self.dqNetwork.actions_: actionsMiniBatch})
-          writer.add_summary(summary, episode)
-          writer.flush()
+          # # Write TF Summaries
+          # summary = sess.run(writeOp, feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
+          #                                     self.dqNetwork.target_Q: targetsMiniBatch,
+          #                                     self.dqNetwork.actions_: actionsMiniBatch})
+          # writer.add_summary(summary, episode)
+          # writer.flush()
 
         # Reset while
         justRevived = True
@@ -125,28 +136,39 @@ class ModelTraining:
         # Save model every 5 episodes
         if episode % 5 == 0:
           print("Model Saved")
-          saver.save(sess, "/home/manuel/Facultad/celdas-tp-final/tensorboard/dqn/1/models/model.ckpt")
+          saver.save(sess, "/home/manuel/Facultad/celdas-tp-final/models/2/model.ckpt")
 
 
-  def predictAction(self, exploreStart, exploreStop, decayRate, decayStep, state, sess):
+  def predictAction(self, exploreStart, exploreStop, decayRate, state, sess):
     ## EPSILON GREEDY STRATEGY
     # Choose action a from state s using epsilon greedy.
     ## First we randomize a number
     expExpTradeoff = np.random.rand()
 
-    exploreProbability = exploreStop + (exploreStart - exploreStop) * np.exp(-decayRate * decayStep)
+    # Get action from Q-network (exploitation)
+    # Estimate the Qs values state
+    Qs = sess.run(self.dqNetwork.output, feed_dict = {self.dqNetwork.inputs_: state.reshape((1, *state.shape))})
+    
+    # Take the biggest Q value (= the best action)
+    actionStrength = abs(np.diff(Qs))
+
+    fastDecay = 1
+    if 2 > actionStrength > 1:
+      fastDecay = 200 - self.decayStep
+      if self.decayStep >= 200:
+        fastDecay = 100
+    elif actionStrength > 2:
+      self.decayStep -= 1
+      fastDecay = 500
+
+    exploreProbability = exploreStop + (exploreStart - exploreStop) * np.exp(-decayRate * self.decayStep * fastDecay)
     
     if (exploreProbability > expExpTradeoff):
-        # Make a random action (exploration)
-        action = random.choice([Actions.HOlD_KEY, Actions.RELEASE_KEY])
+      # Make a random action (exploration)
+      action = random.choice([Actions.HOlD_KEY, Actions.RELEASE_KEY])
         
     else:
-        # Get action from Q-network (exploitation)
-        # Estimate the Qs values state
-        Qs = sess.run(self.dqNetwork.output, feed_dict = {self.dqNetwork.inputs_: state.reshape((1, *state.shape))})
-        
-        # Take the biggest Q value (= the best action)
-        choice = np.argmax(Qs)
-        action = [Actions.HOlD_KEY, Actions.RELEASE_KEY][int(choice)]
+      choice = np.argmax(Qs)
+      action = [Actions.HOlD_KEY, Actions.RELEASE_KEY][int(choice)]
                 
     return action, exploreProbability
