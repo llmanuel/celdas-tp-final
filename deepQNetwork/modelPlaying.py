@@ -1,9 +1,11 @@
 import tensorflow.compat.v1 as tf
 import numpy as np
+import os
 from game.gameWrapper import GameWrapper
 from deepQNetwork.frameProcessor import FrameProcessor
 from game.actions import Actions
 
+cwd = os.getcwd()
 class ModelPlaying:
   def __init__(self, dqNetwork):
     self.frameProcessor = FrameProcessor()
@@ -13,9 +15,8 @@ class ModelPlaying:
   def start(self):
     with tf.Session() as sess:
       saver = tf.train.Saver()
-      
       # Load the model
-      saver.restore(sess, "/home/manuel/Facultad/celdas-tp-final/models/2/model.ckpt")
+      saver.restore(sess, f"{cwd}/models/2/model.ckpt")
       self.game.initGame()
 
       for i in range(100):

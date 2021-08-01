@@ -1,13 +1,16 @@
 import tensorflow.compat.v1 as tf
 import numpy as np
+import os
 import random
 from deepQNetwork.frameProcessor import FrameProcessor
 from game.actions import Actions
 from game.gameWrapper import GameWrapper
 
+cwd = os.getcwd()
+
 class ModelTraining:
   TOTAL_EPISODES = 5000
-  EXPLORE_START = 1.0
+  EXPLORE_START = 0.50
   EXPLORE_STOP = 0.01
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -32,7 +35,7 @@ class ModelTraining:
 
     with tf.Session() as sess:
       sess.run(tf.global_variables_initializer())
-      saver.restore(sess, "/home/manuel/Facultad/celdas-tp-final/models/2/model.ckpt")
+      saver.restore(sess, f"{cwd}/models/2/model.ckpt")
 
       self.game.initGame()
 
@@ -136,7 +139,7 @@ class ModelTraining:
         # Save model every 5 episodes
         if episode % 5 == 0:
           print("Model Saved")
-          saver.save(sess, "/home/manuel/Facultad/celdas-tp-final/models/2/model.ckpt")
+          saver.save(sess, f"{cwd}/models/3/model.ckpt")
 
 
   def predictAction(self, exploreStart, exploreStop, decayRate, state, sess):
