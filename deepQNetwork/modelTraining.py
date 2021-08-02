@@ -10,7 +10,7 @@ cwd = os.getcwd()
 
 class ModelTraining:
   TOTAL_EPISODES = 5000
-  EXPLORE_START = 0.50
+  EXPLORE_START = 1.00
   EXPLORE_STOP = 0.01
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -58,6 +58,8 @@ class ModelTraining:
 
           action, exploreProbability = self.predictAction(self.EXPLORE_START, self.EXPLORE_STOP, self.DECAY_RATE, state, sess)
 
+          newScore = self.game.getScore()
+
           reward, isDead = self.game.makeAction(action)
 
           episodeRewards.append(reward)
@@ -72,8 +74,6 @@ class ModelTraining:
             state = self.frameProcessor.stackFrames(frame, True)
 
             justRevived = True
-
-            newScore = self.game.getScore()
 
             if newScore > bestScore:
               bestScore =  newScore
