@@ -43,7 +43,7 @@ class FlappyBird:
     def calculateWorldPositionObjects(self):
         self.worldPositions =  np.array([
                             [self.wallx,
-                             360 + self.gap - self.offset + 10,
+                             360 + self.gap - self.offset + 20,
                              self.wallUp.get_width() - 10,
                              self.wallUp.get_height()
                              ],
@@ -100,8 +100,8 @@ class FlappyBird:
             self.dead = True
             self.collided = True
         elif not 0 < self.bird[1] < 720:
-            self.bird[1] = 50
-            self.birdY = 50
+            self.bird[1] = 150
+            self.birdY = 150
             self.dead = True
             self.collided = False
             self.counter = 0

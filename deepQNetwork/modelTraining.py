@@ -10,8 +10,8 @@ cwd = os.getcwd()
 
 class ModelTraining:
   TOTAL_EPISODES = 5000
-  EXPLORE_START = 1.00
-  EXPLORE_STOP = 0.01
+  EXPLORE_START = 0.20
+  EXPLORE_STOP = 0.001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
   GAMMA = 0.95
@@ -35,7 +35,7 @@ class ModelTraining:
 
     with tf.Session() as sess:
       sess.run(tf.global_variables_initializer())
-      saver.restore(sess, f"{cwd}/models/2/model.ckpt")
+      saver.restore(sess, f"{cwd}/models/4/model.ckpt")
 
       self.game.initGame()
 
@@ -83,6 +83,7 @@ class ModelTraining:
             print('Episode: {}'.format(episode),
                       # 'Total reward: {}'.format(totalReward),
                       # 'Training loss: {:.4f}'.format(loss),
+                      'Last Score: {:.4f}'.format(newScore),
                       'Best Score: {:.4f}'.format(bestScore),
                       'Max explore Probability: {:.4f}'.format(max(exploringOfEpisode)),
                       'Min explore Probability: {:.4f}'.format(min(exploringOfEpisode)))
@@ -139,7 +140,7 @@ class ModelTraining:
         # Save model every 5 episodes
         if episode % 5 == 0:
           print("Model Saved")
-          saver.save(sess, f"{cwd}/models/3/model.ckpt")
+          saver.save(sess, f"{cwd}/models/5/model.ckpt")
 
 
   def predictAction(self, exploreStart, exploreStop, decayRate, state, sess):
