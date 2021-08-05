@@ -8,6 +8,9 @@ from game.gameWrapper import GameWrapper
 
 cwd = os.getcwd()
 
+READ_FROM_MODEL = f"{cwd}/models/7/model.ckpt"
+SAVE_IN_MODEL = f"{cwd}/models/8/model.ckpt"
+
 class ModelTraining:
   TOTAL_EPISODES = 5000
   EXPLORE_START = 0.20
@@ -35,7 +38,7 @@ class ModelTraining:
 
     with tf.Session() as sess:
       sess.run(tf.global_variables_initializer())
-      saver.restore(sess, f"{cwd}/models/4/model.ckpt")
+      saver.restore(sess, READ_FROM_MODEL)
 
       self.game.initGame()
 
@@ -64,6 +67,10 @@ class ModelTraining:
 
           episodeRewards.append(reward)
           exploringOfEpisode.append(exploreProbability)
+
+          if newScore >= 30 and newScore % 5 == 0:
+            print("Model Saved")
+            saver.save(sess, SAVE_IN_MODEL)
 
           if isDead:
             nextState = np.zeros(state.shape)
@@ -140,7 +147,7 @@ class ModelTraining:
         # Save model every 5 episodes
         if episode % 5 == 0:
           print("Model Saved")
-          saver.save(sess, f"{cwd}/models/5/model.ckpt")
+          saver.save(sess, SAVE_IN_MODEL)
 
 
   def predictAction(self, exploreStart, exploreStop, decayRate, state, sess):

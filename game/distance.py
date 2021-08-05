@@ -24,9 +24,9 @@ class Zones:
     gapSize = bottomWallPosition.top - topWallPosition.bottom
     distance = 0
     if (bottomWallPosition.top < birdPosition.bottom):
-      distance = bottomWallPosition.top + 15 - birdPosition.bottom
+      distance = bottomWallPosition.top - birdPosition.bottom
     elif (bottomWallPosition.top > birdPosition.bottom):
-      distance = bottomWallPosition.top + 15 - birdPosition.bottom
+      distance = bottomWallPosition.top - birdPosition.bottom
     else:
       distance = 0
 

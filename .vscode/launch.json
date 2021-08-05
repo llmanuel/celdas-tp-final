@@ -16,7 +16,20 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/start.py",
+      "args": [ "-m", "${input:mode}" ],
       "console": "integratedTerminal"
+    }
+  ],
+  "inputs": [
+    {
+      "type": "pickString",
+      "id": "mode",
+      "description": "Select between: train <t> or play <p>",
+      "options": [
+        "t",
+        "p"
+      ],
+      "default": "p"
     }
   ]
 }

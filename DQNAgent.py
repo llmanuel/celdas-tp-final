@@ -39,10 +39,10 @@ class Agent:
   #     processedFrame = self.frameProcessor.preprocessFrame(frame)
   #     print(f"{bcolors.OKBLUE}Processed Frame: {processedFrame}{bcolors.ENDC}")
 
-  def run(self):  
-      option = input(f"Select between: train {self.TRAIN} or play {self.RUN}")
+  def run(self, mode):  
+      # option = input(f"Select between: train {self.TRAIN} or play {self.RUN}")
 
-      if option == self.TRAIN:
+      if mode == self.TRAIN:
         # Pretrain model to avoid having an empty memory
         ModelPretraining(self.memory).start()
 
