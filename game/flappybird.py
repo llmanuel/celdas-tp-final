@@ -43,12 +43,12 @@ class FlappyBird:
     def calculateWorldPositionObjects(self):
         self.worldPositions =  np.array([
                             [self.wallx,
-                             360 + self.gap - self.offset + 5,
+                             360 + self.gap - self.offset + 10,
                              self.wallUp.get_width() - 10,
                              self.wallUp.get_height()
                              ],
                              [self.wallx,
-                               0 - self.gap - self.offset - 10,
+                               0 - self.gap - self.offset - 15,
                                self.wallDown.get_width() - 10,
                                self.wallDown.get_height()
                               ],
