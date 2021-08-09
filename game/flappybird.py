@@ -10,7 +10,7 @@ import numpy as np
 class FlappyBird:
     def __init__(self):
         self.screen = pygame.display.set_mode((400, 708))
-        self.bird = pygame.Rect(65, 50, 50, 50)
+        self.bird = pygame.Rect(65, 50, 50, 30)
         self.background = pygame.image.load("assets/background.png").convert()
         self.birdSprites = [pygame.image.load("assets/1.png").convert_alpha(),
                             pygame.image.load("assets/2.png").convert_alpha(),
@@ -43,7 +43,7 @@ class FlappyBird:
     def calculateWorldPositionObjects(self):
         self.worldPositions =  np.array([
                             [self.wallx,
-                             360 + self.gap - self.offset + 20,
+                             360 + self.gap - self.offset + 5,
                              self.wallUp.get_width() - 10,
                              self.wallUp.get_height()
                              ],
@@ -96,6 +96,22 @@ class FlappyBird:
         positions = self.calculateWorldPositionObjects()
         upRect = pygame.Rect(positions[0][0],positions[0][1],positions[0][2],positions[0][3])
         downRect = pygame.Rect(positions[1][0],positions[1][1],positions[1][2],positions[1][3])
+
+        gapSize = upRect.top - downRect.bottom
+
+        gapLimitDanger = gapSize * 0.15
+        gapLimitBottom = gapSize * 0.3
+        gapLimitMiddle = gapSize * 0.5
+        
+        pygame.draw.line(self.screen, (52, 52, 235), self.bird.topleft, self.bird.topright)
+        pygame.draw.line(self.screen, (52, 52, 235), self.bird.bottomleft, self.bird.bottomright)
+        pygame.draw.line(self.screen, (255,0,0), (upRect.right, upRect.top - gapLimitDanger), (upRect.left, upRect.top - gapLimitDanger))
+        pygame.draw.line(self.screen, (255,0,0), (upRect.right, upRect.top - gapLimitBottom), (upRect.left, upRect.top - gapLimitBottom))
+        pygame.draw.line(self.screen, (255,0,0), (upRect.right, upRect.top - gapLimitMiddle), (upRect.left, upRect.top - gapLimitMiddle))
+        pygame.draw.line(self.screen, (255,0,0), upRect.topleft, upRect.topright)
+        pygame.draw.line(self.screen, (255,0,0), downRect.bottomleft, downRect.bottomright)
+        pygame.display.flip()
+
         if upRect.colliderect(self.bird) or downRect.colliderect(self.bird):
             self.dead = True
             self.collided = True

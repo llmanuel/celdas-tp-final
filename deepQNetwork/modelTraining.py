@@ -8,13 +8,13 @@ from game.gameWrapper import GameWrapper
 
 cwd = os.getcwd()
 
-READ_FROM_MODEL = f"{cwd}/models/7/model.ckpt"
-SAVE_IN_MODEL = f"{cwd}/models/8/model.ckpt"
+READ_FROM_MODEL = f"{cwd}/models/b/1/model.ckpt"
+SAVE_IN_MODEL = f"{cwd}/models/b/1/model.ckpt"
 
 class ModelTraining:
-  TOTAL_EPISODES = 5000
-  EXPLORE_START = 0.20
-  EXPLORE_STOP = 0.001
+  TOTAL_EPISODES = 10000
+  EXPLORE_START = 1.00
+  EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
   GAMMA = 0.95
@@ -38,7 +38,7 @@ class ModelTraining:
 
     with tf.Session() as sess:
       sess.run(tf.global_variables_initializer())
-      saver.restore(sess, READ_FROM_MODEL)
+      # saver.restore(sess, READ_FROM_MODEL)
 
       self.game.initGame()
 
@@ -89,11 +89,12 @@ class ModelTraining:
 
             print('Episode: {}'.format(episode),
                       # 'Total reward: {}'.format(totalReward),
-                      # 'Training loss: {:.4f}'.format(loss),
+                      'Training loss: {:.4f}'.format(loss),
                       'Last Score: {:.4f}'.format(newScore),
                       'Best Score: {:.4f}'.format(bestScore),
                       'Max explore Probability: {:.4f}'.format(max(exploringOfEpisode)),
-                      'Min explore Probability: {:.4f}'.format(min(exploringOfEpisode)))
+                      # 'Min explore Probability: {:.4f}'.format(min(exploringOfEpisode))
+                      )
           else:
             nextFrame = self.game.getGameFrame()
             nextState = self.frameProcessor.stackFrames(nextFrame)

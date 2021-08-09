@@ -82,7 +82,7 @@ class DQNetwork:
       self.conv3_batchnorm = tf.compat.v1.layers.batch_normalization(self.conv3,
                                               training = True,
                                               epsilon = 1e-5,
-                                                name = 'batch_norm3')
+                                              name = 'batch_norm3')
 
       self.conv3_out = tf.nn.elu(self.conv3_batchnorm, name="conv3_out")
       ## --> [3, 3, 128]

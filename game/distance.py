@@ -30,7 +30,7 @@ class Zones:
     else:
       distance = 0
 
-    gapLimitDanger = gapSize * 0.2
+    gapLimitDanger = gapSize * 0.15
     gapLimitBottom = gapSize * 0.3
     gapLimitMiddle = gapSize * 0.5
 
