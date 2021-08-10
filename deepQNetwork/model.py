@@ -4,7 +4,7 @@ class DQNetwork:
   SCOPE_NAME = 'FlappyBirdDQNetwork'
   STATE_SIZE = [84, 84, 4]
   ACTION_SIZE = 2          # Jump, do nothing
-  LEARNING_RATE = 0.0002   # Alpha (aka learning rate)
+  LEARNING_RATE = 0.0001   # Alpha (aka learning rate)
 
   def __init__(self):
     tf.compat.v1.disable_eager_execution()

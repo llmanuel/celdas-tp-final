@@ -8,12 +8,12 @@ from game.gameWrapper import GameWrapper
 
 cwd = os.getcwd()
 
-READ_FROM_MODEL = f"{cwd}/models/b/1/model.ckpt"
-SAVE_IN_MODEL = f"{cwd}/models/b/1/model.ckpt"
+READ_FROM_MODEL = f"{cwd}/models/c/1/model.ckpt"
+SAVE_IN_MODEL = f"{cwd}/models/c/1/model.ckpt"
 
 class ModelTraining:
-  TOTAL_EPISODES = 10000
-  EXPLORE_START = 1.00
+  TOTAL_EPISODES = 15000
+  EXPLORE_START = 1.0
   EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -43,6 +43,7 @@ class ModelTraining:
       self.game.initGame()
 
       bestScore = 0
+      trainingCycleCounter = 0
 
       for episode in range(self.TOTAL_EPISODES):
         episodeRewards = []
@@ -92,6 +93,7 @@ class ModelTraining:
                       'Training loss: {:.4f}'.format(loss),
                       'Last Score: {:.4f}'.format(newScore),
                       'Best Score: {:.4f}'.format(bestScore),
+                      'trainingCycleCounter: {:.4f}'.format(trainingCycleCounter),
                       'Max explore Probability: {:.4f}'.format(max(exploringOfEpisode)),
                       # 'Min explore Probability: {:.4f}'.format(min(exploringOfEpisode))
                       )
@@ -134,7 +136,7 @@ class ModelTraining:
                               feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
                                           self.dqNetwork.target_Q: targetsMiniBatch,
                                           self.dqNetwork.actions_: actionsMiniBatch})
-
+          trainingCycleCounter += 1
           # # Write TF Summaries
           # summary = sess.run(writeOp, feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
           #                                     self.dqNetwork.target_Q: targetsMiniBatch,
