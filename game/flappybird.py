@@ -99,15 +99,13 @@ class FlappyBird:
 
         gapSize = upRect.top - downRect.bottom
 
-        gapLimitDanger = gapSize * 0.15
-        gapLimitBottom = gapSize * 0.3
-        gapLimitMiddle = gapSize * 0.5
+        gapLimitDanger = gapSize * 0.20
+        gapLimitBottom = gapSize * 0.35
         
         pygame.draw.line(self.screen, (52, 52, 235), self.bird.topleft, self.bird.topright)
         pygame.draw.line(self.screen, (52, 52, 235), self.bird.bottomleft, self.bird.bottomright)
         pygame.draw.line(self.screen, (255,0,0), (upRect.right, upRect.top - gapLimitDanger), (upRect.left, upRect.top - gapLimitDanger))
         pygame.draw.line(self.screen, (255,0,0), (upRect.right, upRect.top - gapLimitBottom), (upRect.left, upRect.top - gapLimitBottom))
-        pygame.draw.line(self.screen, (255,0,0), (upRect.right, upRect.top - gapLimitMiddle), (upRect.left, upRect.top - gapLimitMiddle))
         pygame.draw.line(self.screen, (255,0,0), upRect.topleft, upRect.topright)
         pygame.draw.line(self.screen, (255,0,0), downRect.bottomleft, downRect.bottomright)
         pygame.display.flip()

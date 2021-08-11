@@ -9,6 +9,8 @@ class UtilityCalculator:
     self.action = action
 
   def getUtility(self):
+    if self.worldResult.hadDied():
+        return -10
     if self.worldResult.zone == Zones.FAR:
         if self.isVelocityHelping(self.action):
             return 1
@@ -27,12 +29,7 @@ class UtilityCalculator:
     elif Zones().inGapZones(self.worldResult.zone):
         if self.worldResult.zone == Zones.GAP_BOTTOM:
             if self.isVelocityHelping(self.action):
-                return 1
-            else:
-                return 0
-        elif self.worldResult.zone == Zones.GAP_MIDDLE:
-            if self.isVelocityHelping(self.action):
-                return 4
+                return 2
             else:
                 return -1
         elif self.worldResult.zone == Zones.GAP_TOP:
@@ -85,8 +82,6 @@ class UtilityCalculator:
               return False
       elif Zones().inGapZones(self.worldResult.zone):
           if isReducingVelocity(self.currentWorldState.velocity, self.worldResult.velocity) and self.worldResult.zone == Zones.GAP_TOP:
-              return True
-          elif isReducingVelocity(self.currentWorldState.velocity, self.worldResult.velocity) and self.worldResult.zone == Zones.GAP_MIDDLE:
               return True
           elif not isReducingVelocity(self.currentWorldState.velocity, self.worldResult.velocity) and self.worldResult.zone == Zones.GAP_BOTTOM:
               return True

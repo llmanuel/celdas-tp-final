@@ -10,7 +10,6 @@ class Zones:
   MIDDLE = 'middle'
   BORDER = 'border'
   GAP_TOP = 'gapTop'
-  GAP_MIDDLE = 'gapMiddle'
   GAP_BOTTOM = 'gapBottom'
   GAP_DANGER = 'gapDanger'
 
@@ -30,9 +29,8 @@ class Zones:
     else:
       distance = 0
 
-    gapLimitDanger = gapSize * 0.15
-    gapLimitBottom = gapSize * 0.3
-    gapLimitMiddle = gapSize * 0.5
+    gapLimitDanger = gapSize * 0.20
+    gapLimitBottom = gapSize * 0.35
 
     if distance >= 40 + gapSize or distance < -40:
       return Zones.FAR
@@ -40,14 +38,12 @@ class Zones:
       return Zones.MIDDLE
     elif gapSize < distance <= 20 + gapSize or 0 > distance >= -20:
       return Zones.BORDER
-    elif gapSize >= distance > gapLimitMiddle:
+    elif gapSize >= distance > gapLimitBottom:
       return Zones.GAP_TOP
-    elif gapLimitMiddle >= distance > gapLimitBottom:
-      return Zones.GAP_MIDDLE
     elif gapLimitBottom >= distance > gapLimitDanger:
       return Zones.GAP_BOTTOM
     elif gapLimitDanger >= distance >= 0:
       return Zones.GAP_DANGER
 
   def inGapZones(self, zone):
-    return zone == Zones.GAP_TOP or zone == Zones.GAP_MIDDLE or zone == Zones.GAP_BOTTOM or zone == Zones.GAP_DANGER
+    return zone == Zones.GAP_TOP or zone == Zones.GAP_BOTTOM or zone == Zones.GAP_DANGER

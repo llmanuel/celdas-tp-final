@@ -65,3 +65,6 @@ class WorldState:
             return bottomWallPosition.top + 15 - birdPosition.bottom
         else:
             return 0
+
+    def hadDied(self):
+        return self.isDead

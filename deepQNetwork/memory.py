@@ -7,6 +7,7 @@ class Memory():
   def __init__(self):
     self.buffer = deque(maxlen = self.MAX_SIZE)
   
+  # experience = (state, action, reward, nextState, isDead)
   def add(self, experience):
     self.buffer.append(experience)
   
