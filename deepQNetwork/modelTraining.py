@@ -8,12 +8,13 @@ from game.gameWrapper import GameWrapper
 
 cwd = os.getcwd()
 
+SAVE_IN_META = f"{cwd}/models/c/1/model.ckpt.meta"
 READ_FROM_MODEL = f"{cwd}/models/c/1/model.ckpt"
-SAVE_IN_MODEL = f"{cwd}/models/c/1/model.ckpt"
+SAVE_IN_MODEL = f"{cwd}/models/c/2/model.ckpt"
 
 class ModelTraining:
   TOTAL_EPISODES = 15000
-  EXPLORE_START = 1.0
+  EXPLORE_START = 0.0334
   EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -34,16 +35,17 @@ class ModelTraining:
     # tf.summary.scalar("Loss", self.dqNetwork.loss)
     # writeOp = tf.summary.merge_all()
 
-    saver = tf.train.Saver()
+    # saver = tf.train.Saver()
+    saver = tf.train.import_meta_graph(SAVE_IN_META)
 
     with tf.Session() as sess:
       sess.run(tf.global_variables_initializer())
-      # saver.restore(sess, READ_FROM_MODEL)
+      saver.restore(sess, READ_FROM_MODEL)
 
       self.game.initGame()
 
-      bestScore = 0
-      trainingCycleCounter = 0
+      bestScore = 20
+      trainingCycleCounter = 375459
 
       for episode in range(self.TOTAL_EPISODES):
         episodeRewards = []

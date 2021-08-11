@@ -16,7 +16,7 @@ class ModelPlaying:
     with tf.Session() as sess:
       saver = tf.train.Saver()
       # Load the model
-      saver.restore(sess, f"{cwd}/models/a/3/model.ckpt")
+      saver.restore(sess, f"{cwd}/models/c/1/model.ckpt")
       self.game.initGame()
 
 
