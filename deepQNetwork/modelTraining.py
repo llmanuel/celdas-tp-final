@@ -165,7 +165,6 @@ class ModelTraining:
     # Estimate the Qs values state
     Qs = sess.run(self.dqNetwork.output, feed_dict = {self.dqNetwork.inputs_: state.reshape((1, *state.shape))})
     
-    # Take the biggest Q value (= the best action)
     actionStrength = abs(np.diff(Qs))
 
     fastDecay = 1
@@ -180,7 +179,6 @@ class ModelTraining:
     exploreProbability = exploreStop + (exploreStart - exploreStop) * np.exp(-decayRate * self.decayStep * fastDecay)
     
     if (exploreProbability > expExpTradeoff):
-      # Make a random action (exploration)
       action = random.choice([Actions.HOlD_KEY, Actions.RELEASE_KEY])
         
     else:
