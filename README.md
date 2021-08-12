@@ -64,4 +64,4 @@ Para reescribir el archivo  **theories.json** descomentar la linea ```agent.py:9
 
 Iniciar tensorboard
 ===================
-tensorboard --logdir=/tensorboard/dqn/1
+tensorboard --logdir=tensorboard/dqn/1

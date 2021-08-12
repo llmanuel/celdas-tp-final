@@ -15,7 +15,7 @@ SAVE_IN_MODEL = f"{cwd}/models/e/1/model.ckpt"
 class ModelTraining:
   TRAINING_CYCLE = 10000
   TOTAL_EPISODES = 100000
-  EXPLORE_START = 1.00
+  EXPLORE_START = 0.0001
   EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -27,8 +27,8 @@ class ModelTraining:
     self.game = GameWrapper()
     self.dqNetwork = dqNetwork
     self.decayStep = 0
-    self.bestScore = 0
-    self.trainingCycleCounter = 0
+    self.bestScore = 30
+    self.trainingCycleCounter = 2291078
 
   def start(self):
     tf.disable_v2_behavior()
@@ -40,7 +40,7 @@ class ModelTraining:
     self.game.initGame()
 
     # Setup TensorBoard Writer
-    writer = tf.summary.FileWriter("/home/manuel/Facultad/celdas-tp-final/tensorboard/dqn/1")
+    writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/e/4")
     ## Losses
     tf.summary.scalar("Loss", self.dqNetwork.loss)
     writeOp = tf.summary.merge_all()
@@ -65,6 +65,8 @@ class ModelTraining:
 
         exploringOfEpisode = []
 
+        alreadySaveAt = 0
+
         while not justRevived:
           self.decayStep += 1
 
@@ -77,9 +79,10 @@ class ModelTraining:
           episodeRewards.append(reward)
           exploringOfEpisode.append(exploreProbability)
 
-          if newScore >= 30 and newScore % 5 == 0:
+          if newScore >= 30  and newScore != alreadySaveAt and newScore % 5 == 0:
             print("Model Saved")
             saver.save(sess, SAVE_IN_MODEL)
+            alreadySaveAt = newScore
 
           if isDead:
             nextState = np.zeros(state.shape)
