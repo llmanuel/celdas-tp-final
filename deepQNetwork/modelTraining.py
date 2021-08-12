@@ -8,13 +8,13 @@ from game.gameWrapper import GameWrapper
 
 cwd = os.getcwd()
 
-SAVE_IN_META = f"{cwd}/models/c/1/model.ckpt.meta"
-READ_FROM_MODEL = f"{cwd}/models/c/1/model.ckpt"
-SAVE_IN_MODEL = f"{cwd}/models/c/2/model.ckpt"
+READ_FROM_META = f"{cwd}/models/c/2/model.ckpt.meta"
+READ_FROM_MODEL = f"{cwd}/models/c/2/model.ckpt"
+SAVE_IN_MODEL = f"{cwd}/models/c/3/model.ckpt"
 
 class ModelTraining:
   TOTAL_EPISODES = 15000
-  EXPLORE_START = 0.0334
+  EXPLORE_START = 0.0016
   EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -30,13 +30,13 @@ class ModelTraining:
   def start(self):
     tf.disable_v2_behavior()
     # Setup TensorBoard Writer
-    # writer = tf.summary.FileWriter("/home/manuel/Facultad/celdas-tp-final/tensorboard/dqn/1")
-    # ## Losses
-    # tf.summary.scalar("Loss", self.dqNetwork.loss)
-    # writeOp = tf.summary.merge_all()
+    writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/1")
+    ## Losses
+    tf.summary.scalar("Loss", self.dqNetwork.loss)
+    writeOp = tf.summary.merge_all()
 
     # saver = tf.train.Saver()
-    saver = tf.train.import_meta_graph(SAVE_IN_META)
+    saver = tf.train.import_meta_graph(READ_FROM_META)
 
     with tf.Session() as sess:
       sess.run(tf.global_variables_initializer())
@@ -45,7 +45,7 @@ class ModelTraining:
       self.game.initGame()
 
       bestScore = 20
-      trainingCycleCounter = 375459
+      trainingCycleCounter = 808411
 
       for episode in range(self.TOTAL_EPISODES):
         episodeRewards = []
@@ -92,7 +92,6 @@ class ModelTraining:
 
             print('Episode: {}'.format(episode),
                       # 'Total reward: {}'.format(totalReward),
-                      'Training loss: {:.4f}'.format(loss),
                       'Last Score: {:.4f}'.format(newScore),
                       'Best Score: {:.4f}'.format(bestScore),
                       'trainingCycleCounter: {:.4f}'.format(trainingCycleCounter),
@@ -140,11 +139,11 @@ class ModelTraining:
                                           self.dqNetwork.actions_: actionsMiniBatch})
           trainingCycleCounter += 1
           # # Write TF Summaries
-          # summary = sess.run(writeOp, feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
-          #                                     self.dqNetwork.target_Q: targetsMiniBatch,
-          #                                     self.dqNetwork.actions_: actionsMiniBatch})
-          # writer.add_summary(summary, episode)
-          # writer.flush()
+          summary = sess.run(writeOp, feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
+                                              self.dqNetwork.target_Q: targetsMiniBatch,
+                                              self.dqNetwork.actions_: actionsMiniBatch})
+          writer.add_summary(summary, episode)
+          writer.flush()
 
         # Reset while
         justRevived = True

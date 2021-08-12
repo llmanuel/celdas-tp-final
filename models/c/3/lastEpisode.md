@@ -1,0 +1,1 @@
+Episode: 670 Last Score: 1.0000 Best Score: 20.0000 trainingCycleCounter: 1120827.0000 Max explore Probability: 0.0004
