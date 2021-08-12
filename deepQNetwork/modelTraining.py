@@ -59,6 +59,8 @@ class ModelTraining:
 
         exploringOfEpisode = []
 
+        alreadySaveAt = 0
+
         while not justRevived:
           self.decayStep += 1
 
@@ -71,9 +73,10 @@ class ModelTraining:
           episodeRewards.append(reward)
           exploringOfEpisode.append(exploreProbability)
 
-          if newScore >= 30 and newScore % 5 == 0:
+          if newScore >= 30 and newScore != alreadySaveAt and newScore % 5 == 0:
             print("Model Saved")
             saver.save(sess, SAVE_IN_MODEL)
+            alreadySaveAt = newScore
 
           if isDead:
             nextState = np.zeros(state.shape)
