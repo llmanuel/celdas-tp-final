@@ -61,3 +61,7 @@ El archivo **theories.json** es donde se guarda el aprendizaje del agente.
 Para volver a entrenar el agente reemplazar el contenido de **theories.json** por el de **theories.example.json**.
 
 Para reescribir el archivo  **theories.json** descomentar la linea ```agent.py:91``` 
+
+Iniciar tensorboard
+===================
+tensorboard --logdir=/tensorboard/dqn/1
