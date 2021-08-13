@@ -8,13 +8,13 @@ from game.gameWrapper import GameWrapper
 
 cwd = os.getcwd()
 
-READ_FROM_META = f"{cwd}/models/c/2/model.ckpt.meta"
-READ_FROM_MODEL = f"{cwd}/models/c/2/model.ckpt"
+READ_FROM_META = f"{cwd}/models/c/3/model.ckpt.meta"
+READ_FROM_MODEL = f"{cwd}/models/c/3/model.ckpt"
 SAVE_IN_MODEL = f"{cwd}/models/c/3/model.ckpt"
 
 class ModelTraining:
   TOTAL_EPISODES = 15000
-  EXPLORE_START = 0.0016
+  EXPLORE_START = 0.0004
   EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -45,7 +45,7 @@ class ModelTraining:
       self.game.initGame()
 
       bestScore = 20
-      trainingCycleCounter = 808411
+      trainingCycleCounter = 1467923
 
       for episode in range(self.TOTAL_EPISODES):
         episodeRewards = []
