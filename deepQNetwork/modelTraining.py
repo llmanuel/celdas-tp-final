@@ -8,10 +8,15 @@ from game.gameWrapper import GameWrapper
 
 cwd = os.getcwd()
 
+READ_FROM_META = f"{cwd}/models/e/1/model.ckpt.meta"
+READ_FROM_MODEL = f"{cwd}/models/e/1/model.ckpt"
+SAVE_IN_MODEL = f"{cwd}/models/e/1/model.ckpt"
+
 class ModelTraining:
-  TOTAL_EPISODES = 5000
-  EXPLORE_START = 0.20
-  EXPLORE_STOP = 0.001
+  TRAINING_CYCLE = 10000
+  TOTAL_EPISODES = 100000
+  EXPLORE_START = 0.0001
+  EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
   GAMMA = 0.95
@@ -22,25 +27,32 @@ class ModelTraining:
     self.game = GameWrapper()
     self.dqNetwork = dqNetwork
     self.decayStep = 0
+    self.bestScore = 35
+    self.trainingCycleCounter = 2687164
 
   def start(self):
     tf.disable_v2_behavior()
+    gpus = tf.config.list_physical_devices('GPU')
+    if gpus:
+      for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+
+    self.game.initGame()
+
     # Setup TensorBoard Writer
-    # writer = tf.summary.FileWriter("/home/manuel/Facultad/celdas-tp-final/tensorboard/dqn/1")
-    # ## Losses
-    # tf.summary.scalar("Loss", self.dqNetwork.loss)
-    # writeOp = tf.summary.merge_all()
+    writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/e/5")
+    ## Losses
+    tf.summary.scalar("Loss", self.dqNetwork.loss)
+    writeOp = tf.summary.merge_all()
 
-    saver = tf.train.Saver()
+    # saver = tf.train.Saver()
+    saver = tf.train.import_meta_graph(READ_FROM_META)
 
-    with tf.Session() as sess:
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.7)
+    with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
       sess.run(tf.global_variables_initializer())
-      saver.restore(sess, f"{cwd}/models/4/model.ckpt")
-
-      self.game.initGame()
-
-      bestScore = 0
-
+      saver.restore(sess, READ_FROM_MODEL)
+      
       for episode in range(self.TOTAL_EPISODES):
         episodeRewards = []
 
@@ -52,6 +64,8 @@ class ModelTraining:
         justRevived = False
 
         exploringOfEpisode = []
+
+        alreadySaveAt = 0
 
         while not justRevived:
           self.decayStep += 1
@@ -65,6 +79,11 @@ class ModelTraining:
           episodeRewards.append(reward)
           exploringOfEpisode.append(exploreProbability)
 
+          if newScore >= 30  and newScore != alreadySaveAt and newScore % 5 == 0:
+            print("Model Saved")
+            saver.save(sess, SAVE_IN_MODEL)
+            alreadySaveAt = newScore
+
           if isDead:
             nextState = np.zeros(state.shape)
             self.memory.add((state, action, reward, nextState, isDead))
@@ -75,18 +94,20 @@ class ModelTraining:
 
             justRevived = True
 
-            if newScore > bestScore:
-              bestScore =  newScore
+            if newScore > self.bestScore:
+              self.bestScore =  newScore
 
             # totalReward = np.sum(episodeRewards)
 
             print('Episode: {}'.format(episode),
                       # 'Total reward: {}'.format(totalReward),
-                      # 'Training loss: {:.4f}'.format(loss),
                       'Last Score: {:.4f}'.format(newScore),
-                      'Best Score: {:.4f}'.format(bestScore),
+                      'Best Score: {:.4f}'.format(self.bestScore),
+                      'trainingCycleCounter: {:.4f}'.format(self.trainingCycleCounter),
                       'Max explore Probability: {:.4f}'.format(max(exploringOfEpisode)),
-                      'Min explore Probability: {:.4f}'.format(min(exploringOfEpisode)))
+                      'Memory occupied: {:.4f}'.format(self.memory.getMemoryOccupied())
+                      # 'Min explore Probability: {:.4f}'.format(min(exploringOfEpisode))
+                      )
           else:
             nextFrame = self.game.getGameFrame()
             nextState = self.frameProcessor.stackFrames(nextFrame)
@@ -126,21 +147,22 @@ class ModelTraining:
                               feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
                                           self.dqNetwork.target_Q: targetsMiniBatch,
                                           self.dqNetwork.actions_: actionsMiniBatch})
-
+          self.trainingCycleCounter += 1
           # # Write TF Summaries
-          # summary = sess.run(writeOp, feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
-          #                                     self.dqNetwork.target_Q: targetsMiniBatch,
-          #                                     self.dqNetwork.actions_: actionsMiniBatch})
-          # writer.add_summary(summary, episode)
-          # writer.flush()
+          summary = sess.run(writeOp, feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
+                                              self.dqNetwork.target_Q: targetsMiniBatch,
+                                              self.dqNetwork.actions_: actionsMiniBatch})
+          writer.add_summary(summary, episode)
+          writer.flush()
 
         # Reset while
         justRevived = True
 
-        # Save model every 5 episodes
+        # Save model every 5 training cycles
         if episode % 5 == 0:
           print("Model Saved")
-          saver.save(sess, f"{cwd}/models/5/model.ckpt")
+          saver.save(sess, SAVE_IN_MODEL)
+
 
 
   def predictAction(self, exploreStart, exploreStop, decayRate, state, sess):

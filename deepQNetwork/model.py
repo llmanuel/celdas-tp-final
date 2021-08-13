@@ -4,7 +4,7 @@ class DQNetwork:
   SCOPE_NAME = 'FlappyBirdDQNetwork'
   STATE_SIZE = [84, 84, 4]
   ACTION_SIZE = 2          # Jump, do nothing
-  LEARNING_RATE = 0.0002   # Alpha (aka learning rate)
+  LEARNING_RATE = 0.00001   # Alpha (aka learning rate)
 
   def __init__(self):
     tf.compat.v1.disable_eager_execution()
@@ -82,7 +82,7 @@ class DQNetwork:
       self.conv3_batchnorm = tf.compat.v1.layers.batch_normalization(self.conv3,
                                               training = True,
                                               epsilon = 1e-5,
-                                                name = 'batch_norm3')
+                                              name = 'batch_norm3')
 
       self.conv3_out = tf.nn.elu(self.conv3_batchnorm, name="conv3_out")
       ## --> [3, 3, 128]
