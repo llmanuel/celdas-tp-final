@@ -27,8 +27,8 @@ class ModelTraining:
     self.game = GameWrapper()
     self.dqNetwork = dqNetwork
     self.decayStep = 0
-    self.bestScore = 30
-    self.trainingCycleCounter = 2291078
+    self.bestScore = 35
+    self.trainingCycleCounter = 2687164
 
   def start(self):
     tf.disable_v2_behavior()
@@ -40,7 +40,7 @@ class ModelTraining:
     self.game.initGame()
 
     # Setup TensorBoard Writer
-    writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/e/4")
+    writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/e/5")
     ## Losses
     tf.summary.scalar("Loss", self.dqNetwork.loss)
     writeOp = tf.summary.merge_all()

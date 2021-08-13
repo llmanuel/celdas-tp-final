@@ -2,7 +2,7 @@ from collections import deque
 import numpy as np
 
 class Memory():
-  MAX_SIZE = 20000          # Number of experiences the Memory can keep
+  MAX_SIZE = 25000          # Number of experiences the Memory can keep
   
   def __init__(self):
     self.buffer = deque(maxlen = self.MAX_SIZE)
