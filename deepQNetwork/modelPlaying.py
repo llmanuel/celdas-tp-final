@@ -16,7 +16,6 @@ class ModelPlaying:
     with tf.Session() as sess:
       saver = tf.train.Saver()
       saver.restore(sess, f"{cwd}/models/e/1/model.ckpt")
-
       self.game.initGame()
 
       for _ in range(100):

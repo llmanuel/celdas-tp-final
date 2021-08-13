@@ -1,1 +1,0 @@
-Episode: 300 Training loss: 6.5491 Last Score: 1.0000 Best Score: 12.0000 trainingCycleCounter: 332878.0000 Max explore Probability: 0.0861
