@@ -1,5 +1,4 @@
 import cv2
-import pygame
 import numpy as np
 from collections import deque
 
@@ -15,9 +14,6 @@ class FrameProcessor:
   def preprocessFrame(self, frame):
     greyFrame = cv2.cvtColor(cv2.resize(frame, (84, 84)), cv2.COLOR_BGR2GRAY)
     normalizedFrame = greyFrame/255
-    # Check if preproccess is working
-    # a = np.unique(normalizedFrame)
-    # print(a)
     return normalizedFrame
 
   def stackFrames(self, currentFrame, justRevived = False):

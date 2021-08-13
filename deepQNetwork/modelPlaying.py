@@ -15,12 +15,11 @@ class ModelPlaying:
   def start(self):
     with tf.Session() as sess:
       saver = tf.train.Saver()
-      # Load the model
-      saver.restore(sess, f"{cwd}/models/a/3/model.ckpt")
+      saver.restore(sess, f"{cwd}/models/e/1/model.ckpt")
+
       self.game.initGame()
 
-
-      for i in range(100):
+      for _ in range(100):
         self.game.forwardTillRevive()
         done = False
         frame = self.game.getGameFrame()
@@ -28,10 +27,7 @@ class ModelPlaying:
         state = self.frameProcessor.stackFrames(frame, True)
         newScore = 0      
         while not self.game.isBirdDead():
-          # Take the biggest Q value (= the best action)
           Qs = sess.run(self.dqNetwork.output, feed_dict = {self.dqNetwork.inputs_: state.reshape((1, *state.shape))})
-          
-          # Take the biggest Q value (= the best action)
           choice = np.argmax(Qs)
           action = [Actions.HOlD_KEY, Actions.RELEASE_KEY][int(choice)]
 

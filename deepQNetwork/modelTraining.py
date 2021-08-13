@@ -13,9 +13,8 @@ READ_FROM_MODEL = f"{cwd}/models/e/1/model.ckpt"
 SAVE_IN_MODEL = f"{cwd}/models/e/1/model.ckpt"
 
 class ModelTraining:
-  TRAINING_CYCLE = 10000
   TOTAL_EPISODES = 100000
-  EXPLORE_START = 0.0001
+  EXPLORE_START = 1.00
   EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -27,8 +26,8 @@ class ModelTraining:
     self.game = GameWrapper()
     self.dqNetwork = dqNetwork
     self.decayStep = 0
-    self.bestScore = 35
-    self.trainingCycleCounter = 2687164
+    self.bestScore = 0
+    self.trainingCycleCounter = 0
 
   def start(self):
     tf.disable_v2_behavior()
@@ -39,23 +38,23 @@ class ModelTraining:
 
     self.game.initGame()
 
-    # Setup TensorBoard Writer
     writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/e/5")
-    ## Losses
     tf.summary.scalar("Loss", self.dqNetwork.loss)
     writeOp = tf.summary.merge_all()
 
+    # If this is the first time training you need this line
     # saver = tf.train.Saver()
+    # If you have a meta file use this line
     saver = tf.train.import_meta_graph(READ_FROM_META)
 
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.7)
+
     with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
       sess.run(tf.global_variables_initializer())
+      # If there is a model to restore from use this line
       saver.restore(sess, READ_FROM_MODEL)
       
       for episode in range(self.TOTAL_EPISODES):
-        episodeRewards = []
-
         self.game.forwardTillRevive()
 
         frame = self.game.getGameFrame()
@@ -76,7 +75,6 @@ class ModelTraining:
 
           reward, isDead = self.game.makeAction(action)
 
-          episodeRewards.append(reward)
           exploringOfEpisode.append(exploreProbability)
 
           if newScore >= 30  and newScore != alreadySaveAt and newScore % 5 == 0:
@@ -97,17 +95,14 @@ class ModelTraining:
             if newScore > self.bestScore:
               self.bestScore =  newScore
 
-            # totalReward = np.sum(episodeRewards)
-
-            print('Episode: {}'.format(episode),
-                      # 'Total reward: {}'.format(totalReward),
-                      'Last Score: {:.4f}'.format(newScore),
-                      'Best Score: {:.4f}'.format(self.bestScore),
-                      'trainingCycleCounter: {:.4f}'.format(self.trainingCycleCounter),
-                      'Max explore Probability: {:.4f}'.format(max(exploringOfEpisode)),
-                      'Memory occupied: {:.4f}'.format(self.memory.getMemoryOccupied())
-                      # 'Min explore Probability: {:.4f}'.format(min(exploringOfEpisode))
-                      )
+            print(
+              'Episode: {}'.format(episode),
+              'Last Score: {:.4f}'.format(newScore),
+              'Best Score: {:.4f}'.format(self.bestScore),
+              'trainingCycleCounter: {:.4f}'.format(self.trainingCycleCounter),
+              'Max explore Probability: {:.4f}'.format(max(exploringOfEpisode)),
+              'Memory occupied: {:.4f} %'.format(self.memory.getMemoryOccupied())
+            )
           else:
             nextFrame = self.game.getGameFrame()
             nextState = self.frameProcessor.stackFrames(nextFrame)
@@ -115,7 +110,6 @@ class ModelTraining:
             state = nextState
 
           ### LEARNING PART            
-          # Obtain random mini-batch from memory
           batch = self.memory.sample(self.BATCH_SIZE)
           statesMiniBatch = np.array([each[0] for each in batch], ndmin=3)
           actionsMiniBatch = np.array([each[1] for each in batch])
@@ -130,28 +124,36 @@ class ModelTraining:
           
           # Set Q_target = r if the episode ends at s+1, otherwise set Q_target = r + gamma*maxQ(s', a')
           for i in range(0, len(batch)):
-              terminal = donesMiniBatch[i]
+            terminal = donesMiniBatch[i]
 
-              # If we are in a terminal state, only equals reward
-              if terminal:
-                  targetQsBatch.append(rewardsMiniBatch[i])
-                  
-              else:
-                  target = rewardsMiniBatch[i] + self.GAMMA * np.max(QsNextState[i])
-                  targetQsBatch.append(target)
-                  
+            if terminal:
+              targetQsBatch.append(rewardsMiniBatch[i])
+                
+            else:
+              target = rewardsMiniBatch[i] + self.GAMMA * np.max(QsNextState[i])
+              targetQsBatch.append(target)
 
           targetsMiniBatch = np.array([each for each in targetQsBatch])
 
-          loss, _ = sess.run([self.dqNetwork.loss, self.dqNetwork.optimizer],
-                              feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
-                                          self.dqNetwork.target_Q: targetsMiniBatch,
-                                          self.dqNetwork.actions_: actionsMiniBatch})
+          loss, _ = sess.run(
+            [self.dqNetwork.loss, self.dqNetwork.optimizer],
+            feed_dict = {
+              self.dqNetwork.inputs_: statesMiniBatch,
+              self.dqNetwork.target_Q: targetsMiniBatch,
+              self.dqNetwork.actions_: actionsMiniBatch
+            }
+          )
+
           self.trainingCycleCounter += 1
           # # Write TF Summaries
-          summary = sess.run(writeOp, feed_dict={self.dqNetwork.inputs_: statesMiniBatch,
-                                              self.dqNetwork.target_Q: targetsMiniBatch,
-                                              self.dqNetwork.actions_: actionsMiniBatch})
+          summary = sess.run(
+            writeOp,
+            feed_dict = {
+              self.dqNetwork.inputs_: statesMiniBatch,
+              self.dqNetwork.target_Q: targetsMiniBatch,
+              self.dqNetwork.actions_: actionsMiniBatch
+            }
+          )
           writer.add_summary(summary, episode)
           writer.flush()
 
@@ -168,14 +170,10 @@ class ModelTraining:
   def predictAction(self, exploreStart, exploreStop, decayRate, state, sess):
     ## EPSILON GREEDY STRATEGY
     # Choose action a from state s using epsilon greedy.
-    ## First we randomize a number
     expExpTradeoff = np.random.rand()
 
-    # Get action from Q-network (exploitation)
-    # Estimate the Qs values state
     Qs = sess.run(self.dqNetwork.output, feed_dict = {self.dqNetwork.inputs_: state.reshape((1, *state.shape))})
     
-    # Take the biggest Q value (= the best action)
     actionStrength = abs(np.diff(Qs))
 
     fastDecay = 1
@@ -190,7 +188,6 @@ class ModelTraining:
     exploreProbability = exploreStop + (exploreStart - exploreStop) * np.exp(-decayRate * self.decayStep * fastDecay)
     
     if (exploreProbability > expExpTradeoff):
-      # Make a random action (exploration)
       action = random.choice([Actions.HOlD_KEY, Actions.RELEASE_KEY])
         
     else:

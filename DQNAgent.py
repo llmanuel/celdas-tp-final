@@ -24,5 +24,5 @@ class Agent:
       # Agent train
       ModelTraining(self.memory, self.dqNetwork).start()
     else:
-      # Agent ru
+      # Agent run
       ModelPlaying(self.dqNetwork).start()
