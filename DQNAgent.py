@@ -1,7 +1,6 @@
 from game.flappybird import FlappyBird
 from deepQNetwork.frameProcessor import FrameProcessor
 from deepQNetwork.memory import Memory
-from deepQNetwork.model import DQNetwork
 from deepQNetwork.modelPretraining import ModelPretraining
 from deepQNetwork.modelTraining import ModelTraining
 from deepQNetwork.modelPlaying import ModelPlaying
@@ -14,7 +13,6 @@ class Agent:
     self.flappybird = FlappyBird()
     self.frameProcessor = FrameProcessor()
     self.memory = Memory()
-    self.dqNetwork = DQNetwork()
 
   def run(self, mode):
     if mode == self.TRAIN:
@@ -22,7 +20,7 @@ class Agent:
       ModelPretraining(self.memory).start()
 
       # Agent train
-      ModelTraining(self.memory, self.dqNetwork).start()
+      ModelTraining(self.memory).start()
     else:
       # Agent run
-      ModelPlaying(self.dqNetwork).start()
+      ModelPlaying().start()

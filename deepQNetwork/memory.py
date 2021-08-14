@@ -20,4 +20,4 @@ class Memory():
     return [self.buffer[i] for i in index]
 
   def getMemoryOccupied(self):
-    return (len(self.buffer) / self.MAX_SIZE) * 100
+    return round((len(self.buffer) / self.MAX_SIZE) * 100, 2)

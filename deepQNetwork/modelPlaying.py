@@ -3,14 +3,16 @@ import numpy as np
 import os
 from game.gameWrapper import GameWrapper
 from deepQNetwork.frameProcessor import FrameProcessor
+from deepQNetwork.model import DQNetwork
 from game.actions import Actions
 
 cwd = os.getcwd()
+
 class ModelPlaying:
-  def __init__(self, dqNetwork):
+  def __init__(self):
     self.frameProcessor = FrameProcessor()
     self.game = GameWrapper()
-    self.dqNetwork = dqNetwork
+    self.dqNetwork = DQNetwork()
 
   def start(self):
     with tf.Session() as sess:

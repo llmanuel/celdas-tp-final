@@ -6,4 +6,4 @@ Episode: 290 Last Score: 30.0000 Best Score: 30.0000 trainingCycleCounter: 22910
 
 Episode: 390 Last Score: 3.0000 Best Score: 35.0000 trainingCycleCounter: 2687164.0000 Max explore Probability: 0.0001 Memory occupied: 20000.0000
 
-Episode: 1701 Last Score: 4.0000 Best Score: 248.0000 trainingCycleCounter: 5508129.0000 Max explore Probability: 0.0001 Memory occupied: 25000.0000
+Episode: 1780 Last Score: 68.0000 Best Score: 248.0000 trainingCycleCounter: 5820232.0000 Max explore Probability: 0.0001 Memory occupied: 25000.0000

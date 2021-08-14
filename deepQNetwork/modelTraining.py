@@ -5,29 +5,30 @@ import random
 from deepQNetwork.frameProcessor import FrameProcessor
 from game.actions import Actions
 from game.gameWrapper import GameWrapper
+from deepQNetwork.model import DQNetwork
 
 cwd = os.getcwd()
 
 READ_FROM_META = f"{cwd}/models/e/1/model.ckpt.meta"
 READ_FROM_MODEL = f"{cwd}/models/e/1/model.ckpt"
-SAVE_IN_MODEL = f"{cwd}/models/e/1/model.ckpt"
+SAVE_IN_MODEL = f"{cwd}/models/e/2/model.ckpt"
 
 class ModelTraining:
   TOTAL_EPISODES = 100000
-  EXPLORE_START = 1.00
+  EXPLORE_START = 0.0001
   EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
   GAMMA = 0.95
 
-  def __init__(self, memory, dqNetwork):
+  def __init__(self, memory):
     self.memory = memory
     self.frameProcessor = FrameProcessor()
     self.game = GameWrapper()
-    self.dqNetwork = dqNetwork
+    self.dqNetwork = DQNetwork()
     self.decayStep = 0
-    self.bestScore = 0
-    self.trainingCycleCounter = 0
+    self.bestScore = 248
+    self.trainingCycleCounter = 5820232
 
   def start(self):
     tf.disable_v2_behavior()
@@ -38,7 +39,7 @@ class ModelTraining:
 
     self.game.initGame()
 
-    writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/e/5")
+    writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/e/6")
     tf.summary.scalar("Loss", self.dqNetwork.loss)
     writeOp = tf.summary.merge_all()
 
@@ -82,6 +83,14 @@ class ModelTraining:
             saver.save(sess, SAVE_IN_MODEL)
             alreadySaveAt = newScore
 
+          if newScore >= 150  and newScore % 50 == 0:
+            print("Model Saved")
+            saver.save(sess, f"{cwd}/models/e/best/{newScore}/model.ckpt")
+
+          if newScore == 200 or newScore == 1000:
+            currentLearningRate = self.dqNetwork.getCurrentLearningRate()
+            self.dqNetwork = DQNetwork(learningRate = (currentLearningRate / 10))
+
           if isDead:
             nextState = np.zeros(state.shape)
             self.memory.add((state, action, reward, nextState, isDead))
@@ -101,7 +110,7 @@ class ModelTraining:
               'Best Score: {:.4f}'.format(self.bestScore),
               'trainingCycleCounter: {:.4f}'.format(self.trainingCycleCounter),
               'Max explore Probability: {:.4f}'.format(max(exploringOfEpisode)),
-              'Memory occupied: {:.4f} %'.format(self.memory.getMemoryOccupied())
+              'Memory occupied: {:.4f}%'.format(self.memory.getMemoryOccupied())
             )
           else:
             nextFrame = self.game.getGameFrame()

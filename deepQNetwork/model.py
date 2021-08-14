@@ -4,9 +4,11 @@ class DQNetwork:
   SCOPE_NAME = 'FlappyBirdDQNetwork'
   STATE_SIZE = [84, 84, 4]
   ACTION_SIZE = 2           # Jump, do nothing
-  LEARNING_RATE = 0.00001   # Alpha (aka learning rate)
+  LEARNING_RATE = 0.000001   # Alpha (aka learning rate)
 
-  def __init__(self):
+  def __init__(self, learningRate = LEARNING_RATE):
+    self.learningRate = learningRate
+
     tf.compat.v1.disable_eager_execution()
     with tf.compat.v1.variable_scope(self.SCOPE_NAME):
       # placeholders
@@ -110,6 +112,8 @@ class DQNetwork:
       # Sum(Qtarget - Q)^2
       self.loss = tf.reduce_mean(tf.square(self.target_Q - self.Q))
       
-      self.optimizer = tf.compat.v1.train.RMSPropOptimizer(self.LEARNING_RATE).minimize(self.loss)
+      self.optimizer = tf.compat.v1.train.RMSPropOptimizer(self.learningRate).minimize(self.loss)
 
 
+  def getCurrentLearningRate(self):
+    return self.learningRate
