@@ -11,7 +11,7 @@ cwd = os.getcwd()
 
 READ_FROM_META = f"{cwd}/models/d/1/model.ckpt.meta"
 READ_FROM_MODEL = f"{cwd}/models/d/1/model.ckpt"
-SAVE_IN_MODEL = f"{cwd}/models/d/2/model.ckpt"
+SAVE_IN_MODEL = f"{cwd}/models/d/1/model.ckpt"
 
 class ModelTraining:
   TOTAL_EPISODES = 100000
@@ -27,8 +27,8 @@ class ModelTraining:
     self.game = GameWrapper()
     self.dqNetwork = DQNetwork()
     self.decayStep = 0
-    self.bestScore = 248
-    self.trainingCycleCounter = 5820232
+    self.bestScore = 0
+    self.trainingCycleCounter = 0
 
   def start(self):
     tf.disable_v2_behavior()

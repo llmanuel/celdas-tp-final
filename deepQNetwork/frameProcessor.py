@@ -12,7 +12,9 @@ class FrameProcessor:
     )
 
   def preprocessFrame(self, frame):
-    greyFrame = cv2.cvtColor(cv2.resize(frame, (84, 84)), cv2.COLOR_BGR2GRAY)
+    # everything behind the bird give no information
+    croppedFrame = frame[64:]
+    greyFrame = cv2.cvtColor(cv2.resize(croppedFrame, (84, 84)), cv2.COLOR_BGR2GRAY)
     normalizedFrame = greyFrame/255
     return normalizedFrame
 
