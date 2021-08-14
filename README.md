@@ -5,6 +5,9 @@ Para lograr correr esta aplicación deberán tener instalado Python 3, algunas b
 * numpy
 * pygame
 * virtualenv
+* pylint
+* tensorflow
+* getkey
 
 Las mismas pueden ser instaladas utilizando el sistema de instalación de paquetes de Python: PIP
 
@@ -36,32 +39,40 @@ Instalar bibliotecas:
 
 pip3 install -r requirements/requirements.txt
 
-Solucion de problemas 
-=====================
+Para que la red juegue 
+======================
+Asegurarse de tener un modelo entrenado. Tener bien seteada la ruta de lectura del mismo en el archivo `deepQNetwork/modelPlaying.py`.
 
-En linux puede que les tire un error por no encontrar el comando "python", ya que lo llama "python3".
+Usando vscode:
+	- Play usando el comando Python: Start DQN
+	- Elegir la opción 'p'
 
-solucion 1: crear un enlace simpolico
+Por consola:
+	```sh
+		python3 start.py -m p
+	```
 
-	sudo ln -s /usr/bin/python3 /usr/bin/python
+Para entrenar la red 
+====================
+Usando vscode:
+	- Play usando el comando Python: Start DQN
+	- Elegir la opción 't'
 
-solucion 2: 
+Por consola:
+	```sh
+		python3 start.py -m t
+	```
 
-	anteponer el comando al archivo: python3 start.py
+Observaciones sobre la red
+==========================
 
-solucion 3:
+Para entrenar un modelo nuevo se debe cambiar las variables para leer y escribir archivos en `deepQNetwork/modelTraining.py`.
+Ademas se debe tener en cuenta de descomentar la linea 46 del mismo archivo, comentando las lineas 48 y 55.
 
-	editar el header del archivo start.py para que tome el comando python3
+Para restaurar la metadata y el checkpoint logrado se debe comentar la linea 46 y descomentar las lineas 48 y 55.
 
-Observaciones sobre el agente
-=============================
-
-El archivo **theories.json** es donde se guarda el aprendizaje del agente.
-
-Para volver a entrenar el agente reemplazar el contenido de **theories.json** por el de **theories.example.json**.
-
-Para reescribir el archivo  **theories.json** descomentar la linea ```agent.py:91``` 
+Para entrenar esta red neuronal se utilizaron aproximadamente 170GB de memoria RAM.
 
 Iniciar tensorboard
 ===================
-tensorboard --logdir=tensorboard/dqn/1
+tensorboard --logdir=tensorboard/dqn/e/4
