@@ -50,7 +50,7 @@ Usando vscode:
 Por consola:
 
 ```sh
-	python3 start.py -m p
+python3 start.py -m p
 ```
 
 Para entrenar la red 
@@ -61,7 +61,7 @@ Usando vscode:
 
 Por consola:
 ```sh
-	python3 start.py -m t
+python3 start.py -m t
 ```
 
 Observaciones sobre la red
