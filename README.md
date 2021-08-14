@@ -7,6 +7,7 @@ Para lograr correr esta aplicación deberán tener instalado Python 3, algunas b
 * virtualenv
 * pylint
 * tensorflow
+* opencv-python
 * getkey
 
 Las mismas pueden ser instaladas utilizando el sistema de instalación de paquetes de Python: PIP
