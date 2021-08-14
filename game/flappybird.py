@@ -46,13 +46,13 @@ class FlappyBird:
       [
         [
           self.wallx,
-          360 + self.gap - self.offset + 10,
+          360 + self.gap - self.offset,
           self.wallUp.get_width() - 10,
           self.wallUp.get_height()
         ],
         [
           self.wallx,
-          0 - self.gap - self.offset - 15,
+          0 - self.gap - self.offset,
           self.wallDown.get_width() - 10,
           self.wallDown.get_height()
         ],
@@ -101,6 +101,17 @@ class FlappyBird:
     positions = self.calculateWorldPositionObjects()
     upRect = pygame.Rect(positions[0][0],positions[0][1],positions[0][2],positions[0][3])
     downRect = pygame.Rect(positions[1][0],positions[1][1],positions[1][2],positions[1][3])
+
+    gapSize = upRect.top - downRect.bottom
+
+    gapLimitDanger = gapSize * 0.25
+    
+    pygame.draw.line(self.screen, (52, 52, 235), self.bird.topleft, self.bird.topright)
+    pygame.draw.line(self.screen, (52, 52, 235), self.bird.bottomleft, self.bird.bottomright)
+    pygame.draw.line(self.screen, (255,0,0), (upRect.right, upRect.top - gapLimitDanger), (upRect.left, upRect.top - gapLimitDanger))
+    pygame.draw.line(self.screen, (255,0,0), upRect.topleft, upRect.topright)
+    pygame.draw.line(self.screen, (255,0,0), downRect.bottomleft, downRect.bottomright)
+    pygame.display.flip()
 
     if upRect.colliderect(self.bird) or downRect.colliderect(self.bird):
       self.dead = True

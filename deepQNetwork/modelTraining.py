@@ -9,13 +9,13 @@ from deepQNetwork.model import DQNetwork
 
 cwd = os.getcwd()
 
-READ_FROM_META = f"{cwd}/models/e/1/model.ckpt.meta"
-READ_FROM_MODEL = f"{cwd}/models/e/1/model.ckpt"
-SAVE_IN_MODEL = f"{cwd}/models/e/2/model.ckpt"
+READ_FROM_META = f"{cwd}/models/d/1/model.ckpt.meta"
+READ_FROM_MODEL = f"{cwd}/models/d/1/model.ckpt"
+SAVE_IN_MODEL = f"{cwd}/models/d/2/model.ckpt"
 
 class ModelTraining:
   TOTAL_EPISODES = 100000
-  EXPLORE_START = 0.0001
+  EXPLORE_START = 1.00
   EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -39,21 +39,21 @@ class ModelTraining:
 
     self.game.initGame()
 
-    writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/e/6")
+    writer = tf.summary.FileWriter(f"{cwd}/tensorboard/dqn/d/1")
     tf.summary.scalar("Loss", self.dqNetwork.loss)
     writeOp = tf.summary.merge_all()
 
     # If this is the first time training you need this line
-    # saver = tf.train.Saver()
+    saver = tf.train.Saver()
     # If you have a meta file use this line
-    saver = tf.train.import_meta_graph(READ_FROM_META)
+    # saver = tf.train.import_meta_graph(READ_FROM_META)
 
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.7)
 
     with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
       sess.run(tf.global_variables_initializer())
       # If there is a model to restore from use this line
-      saver.restore(sess, READ_FROM_MODEL)
+      # saver.restore(sess, READ_FROM_MODEL)
       
       for episode in range(self.TOTAL_EPISODES):
         self.game.forwardTillRevive()
@@ -85,7 +85,7 @@ class ModelTraining:
 
           if newScore >= 150  and newScore % 50 == 0:
             print("Model Saved")
-            saver.save(sess, f"{cwd}/models/e/best/{newScore}/model.ckpt")
+            saver.save(sess, f"{cwd}/models/d/best/{newScore}/model.ckpt")
 
           if newScore == 200 or newScore == 1000:
             currentLearningRate = self.dqNetwork.getCurrentLearningRate()

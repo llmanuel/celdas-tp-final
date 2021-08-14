@@ -26,14 +26,9 @@ class UtilityCalculator:
       else:
         return -1
     elif Zones().inGapZones(self.worldResult.zone):
-      if self.worldResult.zone == Zones.GAP_BOTTOM:
+      if self.worldResult.zone == Zones.GAP_TOP:
         if self.isVelocityHelping(self.action):
-          return 2
-        else:
-          return -1
-      elif self.worldResult.zone == Zones.GAP_TOP:
-        if self.isVelocityHelping(self.action):
-          return 7
+          return 5
         else:
           return -3
       elif self.worldResult.zone == Zones.GAP_DANGER:

@@ -29,8 +29,7 @@ class Zones:
     else:
       distance = 0
 
-    gapLimitDanger = gapSize * 0.20
-    gapLimitBottom = gapSize * 0.35
+    gapLimitDanger = gapSize * 0.25
 
     if distance >= 40 + gapSize or distance < -40:
       return Zones.FAR
@@ -38,10 +37,8 @@ class Zones:
       return Zones.MIDDLE
     elif gapSize < distance <= 20 + gapSize or 0 > distance >= -20:
       return Zones.BORDER
-    elif gapSize >= distance > gapLimitBottom:
+    elif gapSize >= distance > gapLimitDanger:
       return Zones.GAP_TOP
-    elif gapLimitBottom >= distance > gapLimitDanger:
-      return Zones.GAP_BOTTOM
     elif gapLimitDanger >= distance >= 0:
       return Zones.GAP_DANGER
 
