@@ -1,6 +1,6 @@
 Para lograr correr esta aplicación deberán tener instalado Python 3, algunas bibliotecas y creado el entorno virtual:
 
-== bibliotecas necesarias ==
+**Bibliotecas necesarias**
 
 * numpy
 * pygame
@@ -44,29 +44,31 @@ Para que la red juegue
 Asegurarse de tener un modelo entrenado. Tener bien seteada la ruta de lectura del mismo en el archivo `deepQNetwork/modelPlaying.py`.
 
 Usando vscode:
-	- Play usando el comando Python: Start DQN
-	- Elegir la opción 'p'
+* Play usando el comando Python: Start DQN
+* Elegir la opción 'p'
 
 Por consola:
-	```sh
-		python3 start.py -m p
-	```
+
+```sh
+	python3 start.py -m p
+```
 
 Para entrenar la red 
 ====================
 Usando vscode:
-	- Play usando el comando Python: Start DQN
-	- Elegir la opción 't'
+* Play usando el comando Python: Start DQN
+* Elegir la opción 't'
 
 Por consola:
-	```sh
-		python3 start.py -m t
-	```
+```sh
+	python3 start.py -m t
+```
 
 Observaciones sobre la red
 ==========================
 
-Para entrenar un modelo nuevo se debe cambiar las variables para leer y escribir archivos en `deepQNetwork/modelTraining.py`.
+Para entrenar un modelo nuevo se debe cambiar las variables para leer y escribir archivos en `deepQNetwork/modelTraining.py`. 
+
 Ademas se debe tener en cuenta de descomentar la linea 46 del mismo archivo, comentando las lineas 48 y 55.
 
 Para restaurar la metadata y el checkpoint logrado se debe comentar la linea 46 y descomentar las lineas 48 y 55.
