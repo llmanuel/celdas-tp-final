@@ -15,7 +15,7 @@ SAVE_IN_MODEL = f"{cwd}/models/d/1/model.ckpt"
 
 class ModelTraining:
   TOTAL_EPISODES = 100000
-  EXPLORE_START = 1.00
+  EXPLORE_START = 0.0001
   EXPLORE_STOP = 0.0001
   DECAY_RATE = 0.0001 
   BATCH_SIZE = 64
@@ -27,8 +27,8 @@ class ModelTraining:
     self.game = GameWrapper()
     self.dqNetwork = DQNetwork()
     self.decayStep = 0
-    self.bestScore = 0
-    self.trainingCycleCounter = 0
+    self.bestScore = 32
+    self.trainingCycleCounter = 4290388
 
   def start(self):
     tf.disable_v2_behavior()
@@ -44,16 +44,16 @@ class ModelTraining:
     writeOp = tf.summary.merge_all()
 
     # If this is the first time training you need this line
-    saver = tf.train.Saver()
+    # saver = tf.train.Saver()
     # If you have a meta file use this line
-    # saver = tf.train.import_meta_graph(READ_FROM_META)
+    saver = tf.train.import_meta_graph(READ_FROM_META)
 
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.7)
 
     with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
       sess.run(tf.global_variables_initializer())
       # If there is a model to restore from use this line
-      # saver.restore(sess, READ_FROM_MODEL)
+      saver.restore(sess, READ_FROM_MODEL)
       
       for episode in range(self.TOTAL_EPISODES):
         self.game.forwardTillRevive()
@@ -87,9 +87,9 @@ class ModelTraining:
             print("Model Saved")
             saver.save(sess, f"{cwd}/models/d/best/{newScore}/model.ckpt")
 
-          if newScore == 200 or newScore == 1000:
-            currentLearningRate = self.dqNetwork.getCurrentLearningRate()
-            self.dqNetwork = DQNetwork(learningRate = (currentLearningRate / 10))
+          # if newScore == 200 or newScore == 1000:
+          #   currentLearningRate = self.dqNetwork.getCurrentLearningRate()
+          #   self.dqNetwork = DQNetwork(learningRate = (currentLearningRate / 10))
 
           if isDead:
             nextState = np.zeros(state.shape)
