@@ -27,8 +27,8 @@ class ModelTraining:
     self.game = GameWrapper()
     self.dqNetwork = DQNetwork()
     self.decayStep = 0
-    self.bestScore = 32
-    self.trainingCycleCounter = 4290388
+    self.bestScore = 67
+    self.trainingCycleCounter = 7125397
 
   def start(self):
     tf.disable_v2_behavior()
@@ -87,9 +87,11 @@ class ModelTraining:
             print("Model Saved")
             saver.save(sess, f"{cwd}/models/d/best/{newScore}/model.ckpt")
 
-          # if newScore == 200 or newScore == 1000:
-          #   currentLearningRate = self.dqNetwork.getCurrentLearningRate()
-          #   self.dqNetwork = DQNetwork(learningRate = (currentLearningRate / 10))
+          currentLearningRate = self.dqNetwork.getCurrentLearningRate()
+          if newScore == 200 and currentLearningRate == 0.00001:
+            self.dqNetwork = self.dqNetwork.changeLearningRate((currentLearningRate / 10))
+          if newScore == 1000 and currentLearningRate == 0.000001:
+            self.dqNetwork = self.dqNetwork.changeLearningRate((currentLearningRate / 10))
 
           if isDead:
             nextState = np.zeros(state.shape)
